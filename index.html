@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>To‑Do List</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #292a28;
+    --card: #525453;
+    --text: #e6e3da;
+    --muted: #97c0ad;
+    --accent: #74d2a6; 
+    --accent-dark: #428372;
+    --done: #df6f6f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; padding:20px;
+    background: var(--bg); color: var(--text);
+    font-family: 'Roboto Mono', monospace;
+    display: flex; justify-content: center;
+  }
+  .todo {
+    background: var(--card);
+    width:360px; padding:20px;
+    border-radius:20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  h1 {
+    margin:0 0 20px;
+    font-weight:500;
+    font-size:24px;
+    color: var(--accent);
+  }
+  .input-wrapper {
+    display:flex; 
+  }
+  input {
+    flex:1;
+    padding:8px 12px;
+    background: var(--card);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    border-radius: 13px 0px 0px 13px;
+  }
+  input::placeholder { color: var(--muted); }
+  button {
+    background: var(--accent);
+    border:none;
+    color: var(--bg);
+    padding:8px 12px;
+    border-radius: 0px 12px 12px 0px;
+    cursor:pointer;
+    transition: background .2s;
+  }
+  button:hover { background: var(--accent-dark); }
+  ul {
+    list-style:none;
+    padding:0;
+    margin:20px 0 0;
+  }
+  li {
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding:8px;
+    margin-bottom:6px;
+    background: #727272;
+    border-radius:4px;
+  }
+  li.done .text {
+    text-decoration: line-through;
+    color: var(--done);
+  }
+  .text {
+    flex:1;
+    cursor:pointer;
+  }
+  .actions button {
+    margin-left:6px;
+    background:none;
+    border:none;
+    color: var(--muted);
+    cursor:pointer;
+    transition: color .2s;
+  }
+  .actions button:hover { color: var(--text); }
+  .edit-input {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--accent);
+    border-radius:4px;
+    padding:4px 6px;
+    width:60%;
+  }
+</style>
+</head>
+<body>
+<div class="todo">
+  <h1>To‑Do List</h1>
+  <div class="input-wrapper">
+    <input id="newTask" placeholder="Add new task...">
+    <button id="addBtn">Add</button>
+  </div>
+  <ul id="list"></ul>
+</div>
+<script>
+const inp = document.getElementById('newTask'),
+      btn = document.getElementById('addBtn'),
+      ul = document.getElementById('list');
+
+function createTask(text) {
+  const li = document.createElement('li');
+  const span = document.createElement('span');
+  span.className = 'text';
+  span.textContent = text;
+  span.onclick = () => li.classList.toggle('done');
+
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+
+  const edit = document.createElement('button');
+  edit.textContent = 'Edit';
+  edit.onclick = () => {
+    if (edit.textContent === 'Edit') {
+      const input = document.createElement('input');
+      input.className = 'edit-input';
+      input.value = span.textContent;
+      li.replaceChild(input, span);
+      edit.textContent = 'Save';
+    } else {
+      const newText = li.querySelector('.edit-input').value.trim();
+      if (newText) span.textContent = newText;
+      li.replaceChild(span, li.querySelector('.edit-input'));
+      edit.textContent = 'Edit';
+    }
+  };
+
+  const del = document.createElement('button');
+  del.textContent = 'Delete';
+  del.onclick = () => ul.removeChild(li);
+
+  actions.append(edit, del);
+  li.append(span, actions);
+  ul.appendChild(li);
+}
+
+function add() {
+  const t = inp.value.trim();
+  if (!t) return;
+  createTask(t);
+  inp.value = '';
+}
+
+btn.onclick = add;
+inp.onkeyup = e => { if (e.key === 'Enter') add(); };
+</script>
+</body>
+</html>
